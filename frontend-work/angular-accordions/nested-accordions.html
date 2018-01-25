@@ -1,0 +1,33 @@
+<!--Created an accordion within an accordion-->
+<!--With each click being a request to call for those FAQs-->
+<!--Utilized this method to save loading time vs having all FAQs onload-->
+
+<!--begin left column-->
+<div ng-controller="helpFaqController as faqCtrl" class="col-md-7 col-sm-12">
+    <!--begin parent accordion-->
+    <uib-accordion>
+        <div uib-accordion-group class="panel-inverse" ng-repeat="category in faqCtrl.categories | orderBy:'displayOrder' " is-open="category.status.isOpen">
+            <uib-accordion-heading>
+                <h4 class="panel-title" href class="accordion-toggle" ng-click="toggleOpen(); faqCtrl.getCategoryEntries(category)">
+                    <i ng-class=" {'fa fa-minus-circle pull-right' : category.status.isOpen, 'fa fa-plus-circle pull-right' : !category.status.isOpen} "></i> {{category.name}}
+                </h4>
+            </uib-accordion-heading>
+            <!--begin child accordions-->
+            <accordion>
+                <div ng-repeat="entry in category.entries | orderBy:'displayOrder' " ng-click="entry.isCollapsed = !entry.isCollapsed">
+                    <h4 class="site-help-center-faqs_entries">
+                        <i ng-class="entry.isCollapsed ? 'fa fa-chevron-down' : 'fa fa-chevron-right' " id="site-help-center-faqs_question"></i> {{entry.question}}
+                    </h4>
+                    <!--begin child body-->
+                    <div class="panel-body" uib-collapse="!entry.isCollapsed">
+                        {{entry.answerHtml}}
+                    </div>
+                    <!--end child body-->
+                </div>
+            </accordion>
+            <!--end child accordions-->
+        </div>
+    </uib-accordion>
+    <!--end parent accordion-->
+</div>
+<!--end left column-->

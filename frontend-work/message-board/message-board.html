@@ -1,0 +1,54 @@
+<!--Sample of a 'group messaging' page I worked on-->
+
+<!-- begin panel -->
+<div class="panel panel-inverse" data-sortable-id="ui-media-object-2">
+    <div class="panel-heading">
+        <h4 class="panel-title">Client Notes for {{vCtlr.clientName}}</h4>
+    </div>
+    <div class="panel-body">
+        <!--Client Notes Form-->
+        <ng-form novalidate name="vCtlr.form">
+            <div class="row">
+                <div class="form-group col-md-8" ng-class="{'has-error': vCtlr.validate(vCtlr.form.topic)}">
+                    <label for="topic">Topic</label>
+                    <input class="form-control" ng-model="vCtlr.formData.topic" name="topic" required max="100" />
+                    <p class="help-block" ng-show="vCtlr.form.topic.$touched && vCtlr.form.topic.$error.required">A topic is required.</p>
+                    <p class="help-block" ng-show="vCtlr.form.topic.$touched && vCtlr.form.topic.$error.max">A topic can be no more than 100 characters.</p>
+                </div>
+                <div class="form-group col-md-4" ng-class="{'has-error': vCtlr.validate(vCtlr.form.noteDate)}">
+                    <label for="noteDate">Note Date</label>
+                    <input type="date" name="noteDate" class="form-control" ng-model="vCtlr.formData.noteDate" required/>
+                    <p class="help-block" ng-show="vCtlr.form.noteDate.$touched && vCtlr.form.noteDate.$error.required">A date is required.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12" ng-class="{'has-error':vCtlr.validate(vCtlr.form.contentHtml)}">
+                    <label for="contentHtml">Content HTML</label>
+                    <textarea class="form-control" ng-model="vCtlr.formData.contentHtml" name="contentHtml"></textarea>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button ng-click="vCtlr.submitNote(vCtlr.formData)" class="btn btn-white btn-block btn-sm">Submit Note</button>
+            </div>
+        </ng-form>
+        <hr />
+        <!--List of Client Notes-->
+        <ul class="media-list" ng-repeat="note in vCtlr.clientNotes track by $index">
+            <li class="media media-sm">
+                <a class="media-left" href="javascript:;">
+                        <img ng-src="{{note.profile.profileOverrides.imageUrl?note.profile.profileOverrides.imageUrl:note.profile.user.defaultImageUrl}}" alt="" class="media-object rounded-corner">
+                    </a>
+                <div class="media-body">
+                    <h4 class="media-heading">{{note.topic}}</h4>
+                    <p ng-bind-html="note.contentHtml"></p>
+                    <p class="site-view-client-notes_text_italic">{{note.profile.profileOverrides.name}}, {{note.noteDate | date: medium}}</p>
+                </div>
+            </li>
+        </ul>
+        <div class="pull-right">
+            <ul uib-pagination total-items="vCtlr.totalItems" items-per-page="20" ng-model="vCtlr.currentPage" ng-change="vCtlr.pageChanged(vCtlr.currentPage)" class="pagination m-t-0 m-b-10" previous-text="&laquo;" next-text="&raquo;">
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- end panel -->
