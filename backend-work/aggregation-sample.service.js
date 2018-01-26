@@ -1,5 +1,3 @@
-// These are the READ functions from a backend service file I worked on
-// I utilized refactored code, with objects and functions, to utilize
 'use strict'
 
 const Institution = require('../models/institution')
@@ -9,7 +7,11 @@ const ObjectId = mongodb.ObjectId
 
 module.exports = {
     readAll: _readAll,
-    readById: _readById
+    readByIds: _readByIds,
+    readById: _readById,
+    create: _create,
+    update: _update,
+    deactivate: _deactivate
 }
 
 var filterDateDeactivated = { "dateDeactivated": null }
@@ -125,6 +127,26 @@ function _readAll() {
         })
 }
 
+function _readByIds(activeLocationsArr) {
+    let idArray = []
+    for (var i = 0; i < activeLocationsArr.length; i++) {
+        let item = activeLocationsArr[i]
+        item.institutionId = new ObjectId(item.institutionId)
+        idArray.push(item.institutionId)
+    }
+    let query = { "dateDeactivated": null, _id: { $in: idArray } }
+    return conn.db().collection('institutions').find(query).toArray()
+        .then(institutions => {
+            for (let i = 0; i < institutions.length; i++) {
+                let institution = institutions[i]
+                institution._id = institution._id.toString()
+                institution.profileId = institution.profileId.toString()
+                institution.addressId = institution.addressId.toString()
+            }
+            return institutions
+        })
+}
+
 function _readById(id) {
     return conn.db().collection('institutions').aggregate([{
             $match: { $and: [filterDateDeactivated, { _id: new ObjectId(id) }] }
@@ -150,4 +172,26 @@ function _readById(id) {
                 return readMapping(institution[0])
             }
         })
+}
+
+function _create(model) {
+    let doc = newDoc(model)
+    doc.dateCreated = new Date(),
+        doc.dateDeactivated = null,
+        doc.isPending = model.isPending,
+        doc.profileId = new ObjectId(model.profileId)
+
+    return conn.db().collection('institutions').insert(doc)
+        .then(result => result.insertedIds[0].toString())
+}
+
+function _update(id, doc) {
+    let updatedDoc = newDoc(doc)
+    return conn.db().collection('institutions').updateOne({ _id: new ObjectId(id) }, { $set: updatedDoc })
+        .then(result => Promise.resolve())
+}
+
+function _deactivate(id) {
+    return conn.db().collection('institutions').updateOne({ _id: new ObjectId(id) }, { $currentDate: { 'dateDeactivated': true, 'dateModified': true } })
+        .then(result => Promise.resolve())
 }
