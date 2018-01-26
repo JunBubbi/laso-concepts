@@ -1,0 +1,40 @@
+<div class="panel panel-inverse" data-sortable-id="table-basic-4">
+    <div class="panel-heading">
+        <h4 class="panel-title">Address Listings</h4>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Line One</th>
+                        <th>Line Two</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Postal Code</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="address in indexAddCtrl.addresses | filter: { _id: indexAddCtrl.filterArray() }">
+                        <td>{{address.line1}}</td>
+                        <td>{{address.line2}}</td>
+                        <td>{{address.city}}</td>
+                        <td>{{address.stateCode}}</td>
+                        <td>{{address.postalCode}}</td>
+                        <td>
+
+                            <button ui-sref="^.detail({id: address._id})"  class="btn btn-md btn-white btn-icon btn-circle fa fa-eye" uib-popover="Details"
+                            popover-placement="bottom" popover-class="crudPopover"popover-trigger="'mouseenter'"></button>
+                            <button ui-sref=".edit({id:address._id})" class="btn btn-md btn-white btn-icon btn-circle fa fa-pencil" uib-popover="Edit"
+                            popover-placement="bottom" popover-class="crudPopover"popover-trigger="'mouseenter'"></button>
+                            <button ng-click="indexAddCtrl.openModal(address, address.line1)" class="btn btn-md btn-danger btn-icon btn-circle fa fa-times"
+                            uib-popover="Delete" popover-class="crudPopover"popover-placement="bottom" popover-trigger="'mouseenter'"></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div ui-view="content"></div>
